@@ -1,0 +1,34 @@
+package explcheck;
+
+import java.io.File;
+import java.util.logging.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class Main extends JavaPlugin {
+
+    Logger log = Logger.getLogger("ExplosionCheck");
+
+    @Override
+    public void onEnable() {
+
+        if (!(new File(getInstance().getDataFolder().getPath() + "/config.yml").exists())) {
+            getLogger().info("Конфиг не найден! Создаю новый конфиг.");
+            saveDefaultConfig();
+        }
+
+        Bukkit.getPluginManager().registerEvents(new Handler(), this);
+        getCommand("explosion").setExecutor(new ExplosionCommand());
+    }
+
+    @Override
+    public void onDisable() {
+        saveConfig();
+    }
+
+    public static String PLUGIN_NAME = "ExplosionCheck";
+
+    public static Main getInstance() {
+        return (Main) Bukkit.getPluginManager().getPlugin(PLUGIN_NAME);
+    }
+}
