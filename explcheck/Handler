@@ -1,0 +1,55 @@
+package explcheck;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityExplodeEvent;
+
+public class Handler implements Listener {
+
+	@EventHandler
+	public void onEntityExplodeEvent(EntityExplodeEvent e) {
+
+		if (!(e.getEntity() instanceof Creeper)) {
+			return;
+		}
+
+		Creeper creeper = (Creeper) e.getEntity();
+		LivingEntity target = creeper.getTarget();
+
+		if (!(target instanceof Player)) {
+			return;
+		}
+
+		LocalDateTime d = LocalDateTime.now();
+
+		DateTimeFormatter df1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		String time = df1.format(d);
+
+		Player who = (Player) target;
+
+		Location loc = creeper.getLocation();
+
+		FileConfiguration conf = Main.getInstance().getConfig();
+		List<String> strs = new ArrayList<String>();
+
+		if (conf.get("Data") != null) {
+			strs = conf.getStringList("Data");
+		}
+
+		strs.add(time + "," + who.getName() + "," + Math.round(loc.getX()) + ":" + Math.round(loc.getY()) + ":"
+				+ Math.round(loc.getZ()));
+		conf.set("Data", strs);
+
+		Main.getInstance().saveConfig();
+	}
+}
