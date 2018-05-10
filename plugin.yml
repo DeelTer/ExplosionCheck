@@ -1,0 +1,9 @@
+name: ExplosionCheck
+main: explcheck.Main
+version: 1.1
+author: DeelTer
+description: Check creeper explosions
+commands:
+   explosion:
+      description: show explsions list
+      usage: /explosion <list>
