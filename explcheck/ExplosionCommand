@@ -1,0 +1,44 @@
+package explcheck;
+
+import java.util.List;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+
+import net.md_5.bungee.api.ChatColor;
+
+public class ExplosionCommand implements CommandExecutor {
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (sender instanceof Player) {
+			Player p = (Player) sender;
+			if (args.length == 0) {
+				p.sendTitle("§6§lОшибка", "§fиспользуйте /" + label + " list", 10, 20, 10);
+				return true; // §
+			}
+			if (args[0].equalsIgnoreCase("list")) {
+				FileConfiguration conf = Main.getInstance().getConfig();
+
+				if (conf.get("Data") == null) {
+					p.sendTitle("§6§lОшибка", "§fв листе нет записей", 10, 20, 10);
+					return true;
+				}
+				List<String> data = conf.getStringList("Data");
+
+				String msg = "§6━━━━━━━━━━━━━" + "[История взрывов§6]" + "§6━━━━━━━━━━━━━\n";
+				for (String str : data) {
+					String[] strs = str.split(",");
+					msg = msg + ChatColor.GREEN + "[" + strs[0] + "] " + ChatColor.YELLOW + strs[1] + " "
+							+ ChatColor.GRAY + strs[2] + "\n";
+				}
+				msg = msg.substring(0, msg.length() - 1);
+				sender.sendMessage(msg);
+			}
+		}
+		return true;
+	}
+}
